@@ -239,7 +239,7 @@
           <p>Lähetä pyyntö sähköpostilla osoitteeseen <a href="mailto:igor@igorinautohuolto.fi">igor@igorinautohuolto.fi</a> tai soita numeroon <a href="tel:+358503058726">050&#160;305&#160;8726</a>.</p>
         </div>
       </noscript>
-      <form class="form" id="tarjouslomake" method="post" hidden novalidate data-endpoint="" data-sitekey="">
+      <form class="form" id="tarjouslomake" method="post" hidden novalidate data-endpoint="https://lomake.igorinautohuolto.fi/tarjous" data-sitekey="0x4AAAAAAF3cFAbjcrh5yTsj">
         <div class="form__grid">
           <div class="field">
             <label for="nimi">Nimi</label>
@@ -303,8 +303,8 @@
 
         <div class="form__foot">
           <div class="turnstile" id="turnstile"></div>
-          <button class="btn" type="submit" id="laheta"><svg class="i i--mail" aria-hidden="true" focusable="false"><use href="#i-mail"></use></svg><span>Avaa valmis sähköpostiviesti</span></button>
-          <p class="form__note" id="lomake-huomautus">Painike avaa valmiin viestin sähköpostiohjelmaasi. Tietoja ei tallenneta tälle sivustolle.</p>
+          <button class="btn" type="submit" id="laheta"><svg class="i i--mail" aria-hidden="true" focusable="false"><use href="#i-mail"></use></svg><span>Lähetä hinta-arviopyyntö</span></button>
+          <p class="form__note" id="lomake-huomautus">Tiedot lähetetään sähköpostina korjaamolle eikä niitä tallenneta sivustolle. Roskapostin torjuntaan käytetään Cloudflare Turnstilea.</p>
         </div>
 
         <div class="form__result" id="lomake-tulos" hidden tabindex="-1" aria-live="polite"></div>
