@@ -224,69 +224,307 @@
     const live = Boolean(endpoint && sitekey);
     const submitBtn = $("#laheta", form);
     const result = $("#lomake-tulos", form);
+    const fieldset = $("#tyot", form);
     const plate = $("#rekisteri", form);
-    const fieldset = $("fieldset", form);
+    const plateHint = $("#rekisteri-vihje", form);
+    const noPlate = $("#ei-rekisteria", form);
+    const car = $("#auto", form);
+    const carOpt = $("#auto-valinnainen", form);
+    const kmField = $("#km-kentta", form);
+    const kmInput = $("#km", form);
+    const kmHint = $("#km-vihje", form);
+    const kmOpt = $("#km-valinnainen", form);
+    const axleField = $("#akseli-kentta", form);
+    const tyreField = $("#renkaat-kentta", form);
+    const notes = $("#lisatiedot", form);
+    const hintList = $("#lisatiedot-vihje", form);
+    const needs = $("#tarvitaan", form);
+    const needsList = $(".needs__list", needs);
+    const needsLead = $(".needs__lead", needs);
 
-    const formatPlate = (v) => {
-      const s = v.toUpperCase().replace(/[\s_.]+/g, "").replace(/[^A-ZÅÄÖ0-9-]/g, "");
-      const m = s.match(/^([A-ZÅÄÖ]{1,3})-?(\d{1,3})$/);
-      return m ? `${m[1]}-${m[2]}` : s;
+    /* Poistumisen (blur) muutokset tehdään vasta, kun painallus on päättynyt. Muuten esiin tuleva
+       virhe siirtää asettelua, ja klikkaus osuu ohi esimerkiksi lähetyspainikkeesta.
+       Kosketusnäytöllä pointerup tulee ennen kuin fokus siirtyy (mousedown), joten painallus päättyy
+       vasta napautuksen click-tapahtumaan tai varalta 600 ms:n kuluttua (napautus ilman clickiä). */
+    let pressing = false;
+    let afterPress = [];
+    let releaseTimer = 0;
+    const release = () => {
+      clearTimeout(releaseTimer);
+      pressing = false;
+      const fns = afterPress;
+      afterPress = [];
+      if (fns.length) setTimeout(() => fns.forEach((fn) => fn()), 0);
     };
-    plate.addEventListener("blur", () => { plate.value = formatPlate(plate.value); });
+    document.addEventListener("pointerdown", () => {
+      clearTimeout(releaseTimer);
+      pressing = true;
+    }, true);
+    document.addEventListener("pointerup", (e) => {
+      if (e.pointerType === "mouse") return release();
+      clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(release, 600);
+    }, true);
+    document.addEventListener("pointercancel", release, true);
+    document.addEventListener("click", release, true);
+    const onLeave = (el, fn) => el.addEventListener("blur", () => (pressing ? afterPress.push(fn) : fn()));
+
+    /* Rekisterinumero: suomalainen kilpi on 1–3 kirjainta ja 1–3 numeroa. "abc 123", "ABC123", "abc–123",
+       "FIN ABC-123" ja "ABC-1O3" (O-kirjain numerona) -> "ABC-123". Muut tunnukset jätetään sellaisinaan. */
+    const PLATE = /^[A-ZÅÄÖ]{1,3}-\d{1,3}$/;
+    const formatPlate = (v) => {
+      const s = v.toUpperCase().replace(/[\s_.–—]+/g, "").replace(/[^A-ZÅÄÖ0-9-]/g, "");
+      const fit = (x) => {
+        const m = x.match(/^([A-ZÅÄÖ]{1,3})-?(?=[\dO]*\d)([\dO]{1,3})$/);
+        return m ? `${m[1]}-${m[2].replace(/O/g, "0")}` : "";
+      };
+      return fit(s) || (s.startsWith("FIN") && fit(s.slice(3).replace(/^-/, ""))) || s;
+    };
+    const PLATE_HINT = plateHint.textContent;
+    const checkPlate = () => {
+      plate.value = formatPlate(plate.value);
+      plateHint.textContent = plate.value && !PLATE.test(plate.value)
+        ? "Suomalainen kilpi on muotoa ABC-123. Ulkomaisen kilven voit kirjoittaa sellaisenaan."
+        : PLATE_HINT;
+    };
+    onLeave(plate, checkPlate);
+
+    /* Mittarilukema: "152 000", "152000 km", "152 tkm", "152 t.km", "152t", "152,5 tkm" -> 152000.
+       Likimääräiset kelpaavat: "noin 150 000", "n. 150 tkm", "yli 200 tkm", "~150000", "150 000 km?".
+       Pelkkä 1–999 tulkitaan tuhansiksi, ja siitä kerrotaan kentän alla. */
+    function parseKm(raw) {
+      let s = String(raw || "").toLowerCase().replace(/[\s  ]/g, "");
+      if (!s) return null;
+      s = s.replace(/^(noin|n\.?|yli|alle|ca\.?|~|≈)/, "").replace(/[?!]+$/, "").replace(/(kilometri[aä]?|km)\.?$/, "");
+      const thousands = /(tuhatta|t\.?|k)$/.test(s);
+      s = s.replace(/(tuhatta|t\.?|k)$/, "");
+      if (/^\d{1,3}([.,]\d{3})+$/.test(s)) s = s.replace(/[.,]/g, "");
+      if (!/^\d+([.,]\d+)?$/.test(s)) return { km: NaN, guessed: false };
+      let n = Number(s.replace(",", "."));
+      let guessed = false;
+      if (thousands) n *= 1000;
+      else if (n > 0 && n < 1000) { n *= 1000; guessed = true; }
+      n = Math.round(n);
+      return n <= 2000000 ? { km: n, guessed } : { km: NaN, guessed: false };
+    }
+    const fmtKm = (n) => n.toLocaleString("fi-FI");
+    const KM_HINT = kmHint.textContent;
+    // Tunnistamaton lukema ei estä lähettämistä: se näytetään virheenä ja lähetetään tekstinä (values: kmText).
+    const checkKm = () => {
+      const r = parseKm(kmInput.value);
+      kmHint.textContent = KM_HINT;
+      if (r && Number.isNaN(r.km)) { setError(kmInput, "Tarkista lukema. Kirjoita se numeroina, esim. 152 000."); return; }
+      setError(kmInput, "");
+      if (!r) return;
+      kmInput.value = fmtKm(r.km);
+      if (r.guessed) kmHint.textContent = `Muutimme lukeman muotoon ${fmtKm(r.km)} km. Korjaa, jos se on väärin.`;
+    };
+    onLeave(kmInput, checkKm);
+
+    /* Tarkentavat kentät näkyvät vain valittujen töiden mukaan. Piilossa olevat kentät
+       ovat pois käytöstä, joten niiden arvoja ei lähetetä. */
+    const KM_JOBS = ["Määräaikaishuolto", "Öljynvaihto", "Katsastushuolto", "Jakohihna"];
+    const KM_NEEDED = ["Määräaikaishuolto", "Jakohihna"]; // näissä lukema tarvitaan hinta-arvioon
+    const reveal = (block, on) => {
+      block.hidden = !on;
+      $$("input", block).forEach((el) => { el.disabled = !on; });
+    };
+    function syncJobs() {
+      const jobs = $$('input[name="tyo"]:checked', form).map((el) => el.value);
+      reveal(axleField, jobs.includes("Jarrut"));
+      reveal(tyreField, jobs.includes("Renkaat"));
+      reveal(kmField, KM_JOBS.some((j) => jobs.includes(j)));
+      kmOpt.hidden = KM_NEEDED.some((j) => jobs.includes(j));
+    }
+
+    // Ilman rekisterinumeroa auton merkki ja malli on pakollinen.
+    function syncPlate() {
+      const none = noPlate.checked;
+      plate.disabled = none;
+      plate.required = !none;
+      car.required = none;
+      carOpt.hidden = none;
+      setError(none ? "rekisteri" : "auto", "");
+    }
+
+    /* Ohjaus: vihje ja esimerkki lisätietoihin valittujen töiden mukaan sekä lista siitä,
+       mitä hinta-arvioon vielä tarvitaan. Lista ei estä lähettämistä. */
+    const HINTS = {
+      "Määräaikaishuolto": ["kerro, milloin auto on viimeksi huollettu.", "Esim. edellinen huolto noin vuosi sitten, huoltovalo palaa."],
+      "Öljynvaihto": ["kerro, milloin öljy on viimeksi vaihdettu.", "Esim. öljy vaihdettiin viimeksi noin vuosi sitten."],
+      "Katsastushuolto": ["kerro katsastuspäivä ja mahdolliset huomautukset tai hylkäyksen syyt.", "Esim. katsastus ensi kuussa. Viimeksi tuli huomautus etupyörän laakerista."],
+      "Vianhaku": ["kerro, mitä oireita on, milloin ne ilmenevät ja palaako jokin merkkivalo.", "Esim. moottorin merkkivalo syttyi eilen, ja auto nykii kylmänä."],
+      "Jarrut": ["kerro, mitä jarruttaessa kuuluu tai tuntuu, esimerkiksi vinkunaa, kolinaa tai tärinää.", "Esim. edestä kuuluu vinkunaa jarruttaessa, ja ohjauspyörä tärisee."],
+      "Renkaat": ["", "Esim. talvirenkaat ovat jo vanteilla."], // tarkennus kysytään valinnoilla
+      "Jakohihna": ["kerro, onko hihna vaihdettu aiemmin ja millä mittarilukemalla.", "Esim. hihna vaihdettiin viimeksi, kun mittarissa oli 90 000 km."],
+      "Sähkötyöt": ["kerro, mikä ei toimi tai mitä pitäisi asentaa.", "Esim. vasen takavalo ei pala."],
+      "Muu korjaus": ["kerro, mitä pitäisi korjata ja miten vika ilmenee.", "Esim. pakoputki kolisee alustaa vasten."],
+    };
+    const HINT_DEFAULT = hintList.textContent.trim();
+    const PLACEHOLDER_DEFAULT = notes.placeholder;
+    const KM_IN_TEXT = /\d\s*(t\.?\s*)?km\b|\d\s*(tkm|tuhatta)/i;
+    const AXLE_IN_TEXT = /(^|[^a-zåäö])(etu|edes|taka|molem)/i;
+    const SYMPTOM_JOBS = ["Vianhaku", "Sähkötyöt", "Muu korjaus"];
+    const BRAKES = { etujarrut: "etujarrut", takajarrut: "takajarrut", molemmat: "etu- ja takajarrut", "en tiedä": "jarrut" };
+    let lastChip = "";
+    let started = false;
+    let needsKey = null;
+
+    function missing(v) {
+      const has = (t) => v.tyot.includes(t);
+      const out = [];
+      if (!v.tyot.length && !v.lisatiedot) out.push(["tyot", "valittu työ tai vian kuvaus"]);
+      if (!v.eiRekisteria && !v.rekisteri) out.push(["rekisteri", "rekisterinumero"]);
+      if (v.eiRekisteria && !v.auto) out.push(["auto", "auton merkki ja malli"]);
+      if (KM_NEEDED.some(has) && v.km === null && !KM_IN_TEXT.test(v.lisatiedot)) {
+        out.push(["km", "mittarilukema"]);
+      }
+      if (has("Jarrut") && !v.akseli && !AXLE_IN_TEXT.test(v.lisatiedot)) out.push(["akseli", "tieto etu- tai takajarruista"]);
+      if (has("Renkaat") && !v.renkaat.length && v.lisatiedot.length < 20) out.push(["renkaat", "tieto rengastyöstä"]);
+      if (SYMPTOM_JOBS.some(has) && v.lisatiedot.length < 20) out.push(["lisatiedot", "lyhyt kuvaus viasta tai työstä"]);
+      return out;
+    }
+
+    function guide(e) {
+      const t = e?.target;
+      if (t?.name === "tyo") lastChip = t.checked ? t.value : (lastChip === t.value ? "" : lastChip);
+      const v = values();
+      if (!t || t.name === "tyo") {
+        const hinted = v.tyot.filter((j) => HINTS[j]?.[0]);
+        hintList.innerHTML = hinted.length
+          ? hinted.map((j) => `<li><b>${j}:</b> ${HINTS[j][0]}</li>`).join("")
+          : `<li>${HINT_DEFAULT}</li>`;
+        const ex = HINTS[lastChip] ? lastChip : v.tyot.find((j) => HINTS[j]);
+        notes.placeholder = ex ? HINTS[ex][1] : PLACEHOLDER_DEFAULT;
+      }
+      if (!started) return;
+      const list = missing(v);
+      const key = list.map(([id]) => id).join();
+      if (key === needsKey) return; // ei turhaa uudelleenpiirtoa kirjoittaessa
+      needsKey = key;
+      needs.hidden = false;
+      needs.toggleAttribute("data-done", !list.length);
+      needsLead.textContent = list.length ? "Tarkkaan hinta-arvioon tarvitaan vielä:" : "Tiedot riittävät hinta-arvioon.";
+      needsList.innerHTML = list.map(([id, label]) => `<li><button type="button" data-goto="${id}">${label}</button></li>`).join("");
+    }
+
+    needsList.addEventListener("click", (e) => {
+      const id = e.target.closest("[data-goto]")?.dataset.goto;
+      if (!id) return;
+      const target = id === "tyot" ? $('input[name="tyo"]', form)
+        : id === "akseli" || id === "renkaat" ? $(`#${id} input`, form)
+        : $(`#${id}`, form);
+      target?.focus();
+    });
 
     const setError = (field, message) => {
       const input = typeof field === "string" ? $(`#${field}`, form) : field;
       const isSet = input.tagName === "FIELDSET";
       const err = $(`#${isSet ? "tyot" : input.id}-virhe`, form);
-      const targets = isSet ? $$("input", input) : [input];
+      const targets = isSet ? $$('input[name="tyo"]', input) : [input];
       targets.forEach((el) => el.setAttribute("aria-invalid", message ? "true" : "false"));
       if (err) err.textContent = message || "";
       return !message;
     };
 
+    /* Näkymättömät suunta- ja muotoilumerkit (esim. puhelimen yhteystiedoista kopioidussa numerossa)
+       pois ennen tarkistusta. Lomakkeen vastaanotin poistaa samat merkit. */
+    const INVISIBLE = /[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g;
+
+    // FormData ohittaa pois käytöstä olevat kentät: piilotetut tarkennukset ja rekisterinumeron, kun sitä ei ole.
     const values = () => {
       const data = new FormData(form);
+      const kmRaw = (data.get("km") || "").trim();
+      const km = parseKm(kmRaw);
       return {
         nimi: (data.get("nimi") || "").trim(),
-        puhelin: (data.get("puhelin") || "").trim(),
+        puhelin: (data.get("puhelin") || "").replace(INVISIBLE, "").trim(),
         sahkoposti: (data.get("sahkoposti") || "").trim(),
         rekisteri: formatPlate((data.get("rekisteri") || "").trim()),
+        eiRekisteria: noPlate.checked,
         auto: (data.get("auto") || "").trim(),
         tyot: data.getAll("tyo"),
+        km: km && !Number.isNaN(km.km) ? km.km : null,
+        kmText: km && Number.isNaN(km.km) ? kmRaw : "", // tunnistamaton lukema sellaisenaan
+        akseli: data.get("akseli") || "",
+        renkaat: data.getAll("renkaat"),
         lisatiedot: (data.get("lisatiedot") || "").trim(),
         ajankohta: data.get("ajankohta") || "",
         website: (data.get("website") || "").trim(),
       };
     };
 
+    /* Puhelinnumero: numerot, välilyönnit, yhdysmerkit ja sulkeet, + vain alussa, 6–15 numeroa.
+       Vastaanotin tarkistaa saman säännön. */
+    const PHONE = /^\+?(?:[\s()-]*\d){6,15}[\s()-]*$/;
+    const PHONE_CHARS = /^\+?[\d\s()-]*$/;
+    // Sähköposti kuten vastaanottimessa: selaimen tarkistus hyväksyy myös pisteettömän verkkotunnuksen (nimi@gmailcom).
+    const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+
+    // Kenttäkohtaiset tarkistukset: virheteksti tai "". Käytetään lähetettäessä ja kentästä poistuttaessa.
+    const CHECKS = {
+      rekisteri: (v) => (v.eiRekisteria || v.rekisteri.replace(/[^A-ZÅÄÖ0-9]/g, "").length >= 2
+        ? "" : "Kirjoita rekisterinumero tai rastita sen alla oleva kohta."),
+      auto: (v) => (!v.eiRekisteria || v.auto ? "" : "Kirjoita auton merkki ja malli."),
+      nimi: (v) => (v.nimi ? "" : "Kirjoita nimesi."),
+      puhelin: (v) => {
+        if (PHONE.test(v.puhelin)) return "";
+        return PHONE_CHARS.test(v.puhelin) && v.puhelin.replace(/\D/g, "").length < 6
+          ? "Kirjoita koko puhelinnumero, johon voimme soittaa."
+          : "Tarkista puhelinnumero. Kirjoita se numeroina, esim. 040 123 4567.";
+      },
+      sahkoposti: (v) => (!v.sahkoposti || ($("#sahkoposti", form).checkValidity() && EMAIL_RE.test(v.sahkoposti))
+        ? "" : "Tarkista sähköpostiosoite (esim. nimi@esimerkki.fi) tai jätä kenttä tyhjäksi."),
+    };
+    const CHECKED = Object.keys(CHECKS);
+
     function validate(v) {
       const checks = [
-        setError("nimi", v.nimi ? "" : "Kirjoita nimesi."),
-        setError("puhelin", v.puhelin.replace(/\D/g, "").length >= 6 ? "" : "Kirjoita koko puhelinnumero, johon voimme soittaa."),
         setError(fieldset, v.tyot.length || v.lisatiedot
           ? "" : "Valitse vähintään yksi työ tai kerro lisätiedoissa, mitä autolle pitäisi tehdä."),
-        setError("sahkoposti", !v.sahkoposti || $("#sahkoposti", form).checkValidity()
-          ? "" : "Tarkista sähköpostiosoite (esim. nimi@esimerkki.fi) tai jätä kenttä tyhjäksi."),
+        ...CHECKED.map((id) => setError(id, CHECKS[id](v))),
       ];
       return checks.every(Boolean);
     }
 
+    // Puhelinnumerosta näkymättömät merkit pois myös kentästä, jottei sama virhe toistu.
+    const phoneInput = $("#puhelin", form);
+    phoneInput.addEventListener("blur", () => {
+      const v = phoneInput.value.replace(INVISIBLE, "");
+      if (v !== phoneInput.value) phoneInput.value = v;
+    });
+
+    // Kenttä tarkistetaan, kun siitä poistutaan, mutta vasta kun siihen on kirjoitettu.
+    const touched = new Set();
+    CHECKED.forEach((id) => {
+      const el = $(`#${id}`, form);
+      onLeave(el, () => { if (touched.has(id)) setError(el, CHECKS[id](values())); });
+    });
+
     const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+    const jobLine = (t, v) => {
+      if (t === "Jarrut" && v.akseli) return BRAKES[v.akseli];
+      if (t === "Renkaat" && v.renkaat.length) return `renkaat: ${v.renkaat.map(lower).join(", ")}`;
+      return lower(t);
+    };
 
     function compose(v) {
-      const car = [v.rekisteri, v.auto].filter(Boolean).join(", ");
-      const subject = `Hinta-arviopyyntö${car ? ` – ${car}` : ""}`;
+      const carText = [v.rekisteri, v.auto].filter(Boolean).join(", ");
+      const subject = `Hinta-arviopyyntö${carText ? ` – ${carText}` : ""}`;
       const lines = [];
       if (v.tyot.length) {
         lines.push("Hei,", "", "pyydän hinta-arviota seuraavista töistä:");
-        v.tyot.forEach((t) => lines.push(`– ${lower(t)}`));
+        v.tyot.forEach((t) => lines.push(`– ${jobLine(t, v)}`));
       } else {
         lines.push("Hei,", "", "pyydän hinta-arviota autoni korjauksesta.");
       }
       if (v.lisatiedot) lines.push("", "Lisätiedot:", v.lisatiedot);
       lines.push("");
       if (v.auto) lines.push(`Auto: ${v.auto}`);
-      if (v.rekisteri) lines.push(`Rekisterinumero: ${v.rekisteri}`);
+      if (v.eiRekisteria) lines.push("Rekisterinumero: ei tiedossa");
+      else if (v.rekisteri) lines.push(`Rekisterinumero: ${v.rekisteri}`);
+      if (v.km !== null) lines.push(`Mittarilukema: ${fmtKm(v.km)} km`);
+      else if (v.kmText) lines.push(`Mittarilukema: ${v.kmText}`);
       lines.push(`Toivottu ajankohta: ${lower(v.ajankohta)}`, "");
       lines.push(`Nimi: ${v.nimi}`, `Puhelin: ${v.puhelin}`);
       if (v.sahkoposti) lines.push(`Sähköposti: ${v.sahkoposti}`);
@@ -348,13 +586,29 @@
       return turnstileToken;
     };
 
+    // Lähetyksen jälkeen lomake palautetaan alkutilaan: kentät, vihjeet ja muistilista.
+    function resetForm() {
+      form.reset();
+      touched.clear();
+      plateHint.textContent = PLATE_HINT;
+      kmHint.textContent = KM_HINT;
+      setError(kmInput, "");
+      started = false;
+      needsKey = null;
+      needs.hidden = true;
+      lastChip = "";
+      syncJobs();
+      syncPlate();
+      guide();
+    }
+
     let lastMessage = null;
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const v = values();
       if (!validate(v)) {
-        $('[aria-invalid="true"]', form)?.focus(); // ensimmäinen virhe sivun järjestyksessä
+        $('[aria-invalid="true"]:not(#km)', form)?.focus(); // ensimmäinen estävä virhe sivun järjestyksessä
         return;
       }
       const msg = compose(v);
@@ -382,13 +636,16 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             nimi: v.nimi, puhelin: v.puhelin, sahkoposti: v.sahkoposti, rekisteri: v.rekisteri, auto: v.auto,
-            tyot: v.tyot, lisatiedot: v.lisatiedot, ajankohta: v.ajankohta,
+            tyot: v.tyot, ajankohta: v.ajankohta,
+            // Vastaanotin hyväksyy lukeman vain numerona: tunnistamaton lukema lisätietojen perään.
+            lisatiedot: v.kmText ? [v.lisatiedot, `Mittarilukema: ${v.kmText}`].filter(Boolean).join("\n\n") : v.lisatiedot,
+            km: v.km, akseli: v.akseli, renkaat: v.renkaat, eiRekisteria: v.eiRekisteria,
             website: v.website, t: Date.now() - loadedAt, turnstile: token,
           }),
         });
         const out = await res.json().catch(() => ({}));
         if (!res.ok || !out.ok) throw new Error(out.error || "send");
-        form.reset();
+        resetForm();
         showResult("ok", `
           <p><b>Kiitos! Hinta-arviopyyntö on lähetetty.</b></p>
           <p>Vastaamme arkipäivisin mahdollisimman pian. Kiireellisissä asioissa soita numeroon ${PHONE_DISPLAY}.</p>`);
@@ -406,10 +663,20 @@
     });
 
     form.addEventListener("input", (e) => {
+      started = true;
       const t = e.target;
+      if (CHECKED.includes(t.id)) touched.add(t.id);
+      if (t.name === "tyo") syncJobs();
+      if (t === noPlate) syncPlate();
+      guide(e);
       if (t.name === "tyo" || t.name === "lisatiedot") setError(fieldset, "");
       else if (t.getAttribute("aria-invalid") === "true") setError(t, "");
     });
+
+    // Selain voi palauttaa valinnat, kun sivulle palataan.
+    syncJobs();
+    syncPlate();
+    guide();
 
     result.addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-copy]");

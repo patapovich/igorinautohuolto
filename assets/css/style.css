@@ -809,6 +809,107 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 }
 .chip input:focus-visible + span { outline: 3px solid var(--kulta-tumma); outline-offset: 2px; }
 
+/* Ohjaavat lisäkentät: piilotettu kenttä pysyy piilossa, vaikka .field on grid */
+.form__grid [hidden] { display: none !important; }
+.vh {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Rekisterinumero: virhe ja "ei rekisterinumeroa" */
+.plate:has(input[aria-invalid="true"]) { border-color: var(--virhe); }
+.plate:has(input:disabled) { opacity: 0.45; }
+.field .plate input:disabled { cursor: not-allowed; }
+.field .check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 32px;
+  font-size: 0.93rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.field .check input {
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--hiili);
+  cursor: pointer;
+}
+.field .check input:focus { box-shadow: none; }
+.field .check input:focus-visible { outline: 3px solid var(--kulta-tumma); outline-offset: 2px; }
+
+/* Mittarilukema: yksikkö kentän sisällä */
+.unit { position: relative; }
+.field .unit input { padding-right: 3rem; font-variant-numeric: tabular-nums; }
+.unit__label {
+  position: absolute;
+  top: 50%;
+  right: 0.9rem;
+  transform: translateY(-50%);
+  font-weight: 600;
+  color: var(--teksti-2);
+  pointer-events: none;
+}
+
+/* Tarkentava kysymys valitun työn alla: kultainen viiva sitoo sen valintaan */
+.subq { margin-top: 0.95rem; padding-left: 1rem; border-left: 2px solid var(--kulta); }
+.subq fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.field .subq legend { margin-bottom: 0.4rem; font-size: 0.9rem; }
+.subq .field__hint { margin-top: 0.45rem; }
+.chips--sm .chip input { min-height: 0; }
+.chips--sm .chip span { min-height: 38px; padding: 0.35rem 0.8rem; font-size: 0.9rem; }
+
+/* Lisätietojen vihjeet valittujen töiden mukaan */
+.hints { display: grid; gap: 0.2rem; margin: 0; padding: 0; list-style: none; }
+.hints b { font-weight: 650; color: var(--teksti); }
+
+/* Mitä hinta-arvioon vielä tarvitaan (ei estä lähettämistä) */
+.needs { display: grid; gap: 0.3rem; font-size: 0.92rem; }
+.needs[hidden] { display: none; }
+.needs__lead { font-weight: 650; }
+.needs__list { display: flex; flex-wrap: wrap; gap: 0.1rem 1.1rem; margin: 0; padding: 0; list-style: none; }
+.needs__list button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--kulta);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.needs__list button::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: none;
+  border: 1.5px solid var(--reuna);
+  border-radius: 50%;
+}
+.needs__list button:hover { text-decoration-color: currentColor; }
+.needs[data-done] .needs__lead { display: inline-flex; align-items: center; gap: 0.55rem; font-weight: 500; color: var(--teksti-2); }
+.needs[data-done] .needs__lead::before {
+  content: "";
+  width: 0.42rem;
+  height: 0.78rem;
+  margin: -0.2rem 0.1rem 0 0.15rem;
+  border: solid var(--kulta-tumma);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 .hp {
   position: absolute !important;
   left: -10000px;
