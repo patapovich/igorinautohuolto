@@ -1303,6 +1303,60 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
   .site-footer { padding-bottom: calc(6.75rem + env(safe-area-inset-bottom)); }
 }
 
+/* ---------- Palvelusivut ---------- */
+
+.page-hero {
+  padding: calc(var(--header-h) + clamp(2.25rem, 6vw, 4.5rem)) 0 clamp(2.5rem, 6vw, 4.25rem);
+  background: var(--hiili);
+  color: var(--teksti-tumma);
+  --focus: var(--kulta-vaalea);
+}
+.page-hero__path { margin-bottom: 1rem; font-size: 0.94rem; color: var(--teksti-tumma-2); }
+.page-hero__path a { text-underline-offset: 3px; }
+.page-hero h1 {
+  max-width: 13ch;
+  font-size: clamp(2.7rem, 1.5rem + 5.2vw, 5.25rem);
+  font-weight: 850;
+  line-height: 0.92;
+  letter-spacing: -0.018em;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.prose { max-width: 42rem; }
+.prose h2 { margin: 2.75rem 0 0.9rem; font-size: clamp(1.7rem, 1.35rem + 1.3vw, 2.35rem); }
+.prose h2:first-child { margin-top: 0; }
+.prose p + p { margin-top: 0.9rem; }
+.prose ul,
+.prose ol { margin: 1rem 0; padding-left: 1.3rem; }
+.prose li { margin-bottom: 0.45rem; }
+.prose li::marker { color: var(--kulta-tumma); font-weight: 700; }
+
+.facts {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+  padding: 1.5rem;
+  border-radius: var(--r-img);
+  background: var(--kalkki);
+}
+.facts dl { margin: 0 0 1.25rem; }
+.facts dl > div { padding: 0.8rem 0; border-top: 1px solid var(--viiva); }
+.facts dl > div:first-child { padding-top: 0; border-top: 0; }
+.facts dt { font-size: 0.86rem; color: var(--teksti-2); }
+.facts dd { margin: 0.1rem 0 0; font-weight: 700; }
+.facts .btn { width: 100%; }
+
+.board li a { text-underline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr; }
+  .facts { position: static; order: -1; }
+}
+
 /* ---------- Liike ja tulostus ---------- */
 
 @media (prefers-reduced-motion: reduce) {
