@@ -22,6 +22,28 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Varafontit otsikoille, kun Archivo ei ole vielä latautunut: Arial (tai Arial Narrow, jos se on koneella)
+   skaalattuna Archivon kapean leikkauksen leveyteen, jottei otsikon rivitys muutu fontin vaihtuessa.
+   Kertoimet mitattu selaimessa (Archivo 800, leveys 66 % ja 82 %, suhteessa Arial Boldiin). */
+@font-face {
+  font-family: "Archivo Display Narrow Fallback";
+  src: local("Arial Narrow Bold"), local("ArialNarrow-Bold");
+  font-weight: 700 900;
+  size-adjust: 90%;
+}
+@font-face {
+  font-family: "Archivo Display Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 700 900;
+  size-adjust: 74%;
+}
+@font-face {
+  font-family: "Archivo Narrow Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 700 900;
+  size-adjust: 88%;
+}
+
 :root {
   color-scheme: light;
 
@@ -105,8 +127,14 @@ h1, h2, h3 {
   word-spacing: 0.05em;
   text-wrap: balance;
 }
-h1, h2 { font-stretch: var(--display); }
-h3 { font-stretch: var(--kapea); }
+h1, h2 {
+  font-family: "Archivo", "Archivo Display Narrow Fallback", "Archivo Display Fallback", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-stretch: var(--display);
+}
+h3 {
+  font-family: "Archivo", "Archivo Narrow Fallback", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-stretch: var(--kapea);
+}
 p { margin: 0; text-wrap: pretty; }
 .nobr { white-space: nowrap; }
 
@@ -374,9 +402,12 @@ p { margin: 0; text-wrap: pretty; }
 
 @media (max-width: 860px) {
   .hero { padding-top: calc(var(--header-h) + 2rem); }
-  .hero__grid { grid-template-columns: 1fr; }
-  .hero__media picture { aspect-ratio: 4 / 3; }
-  .hero__media img { object-position: 30% 35%; }
+  .hero__grid { grid-template-columns: minmax(0, 1fr) clamp(6.25rem, 30vw, 15rem); gap: 0 0.9rem; align-items: end; }
+  .hero__copy { display: contents; }
+  .hero h1 { grid-column: 1; grid-row: 1; max-width: none; font-size: min(12vw, 5.5rem); }
+  .hero__media { grid-column: 2; grid-row: 1; }
+  .hero__lead, .hero__actions, .hero__meta { grid-column: 1 / -1; }
+  .hero__media figcaption { display: none; }
   .hero__gear { display: none; }
 }
 @media (max-width: 540px) {
@@ -867,6 +898,12 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 .chips--sm .chip input { min-height: 0; }
 .chips--sm .chip span { min-height: 38px; padding: 0.35rem 0.8rem; font-size: 0.9rem; }
 
+@media (pointer: coarse) {
+  .chip span,
+  .chips--sm .chip span { min-height: 48px; }
+  .field .check { min-height: 48px; }
+}
+
 /* Lisätietojen vihjeet valittujen töiden mukaan */
 .hints { display: grid; gap: 0.2rem; margin: 0; padding: 0; list-style: none; }
 .hints b { font-weight: 650; color: var(--teksti); }
@@ -949,12 +986,15 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 
 @media (max-width: 960px) {
   .quote { grid-template-columns: 1fr; }
-  /* Lomake ensin, vaiheet ja puhelinnumero sen jälkeen */
+  /* Vaiheet tiiviinä ennen lomaketta (pelkät otsikot), puhelinnumero lomakkeen jälkeen */
   .quote__intro { display: contents; }
   .quote__intro > h2 { order: 0; }
   .quote__intro > p { order: 1; margin-top: -0.75rem; }
-  .quote > .form { order: 2; }
-  .steps { order: 3; margin-top: 0.5rem; }
+  .steps { order: 2; gap: 0.7rem; margin-top: -0.5rem; }
+  .steps li { display: flex; align-items: center; min-height: 2rem; }
+  .steps li::before { top: 0; }
+  .steps span { display: none; }
+  .quote > .form { order: 3; }
   .callcard { order: 4; margin-top: 0; }
 }
 @media (max-width: 560px) {

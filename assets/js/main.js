@@ -312,7 +312,7 @@
     const checkKm = () => {
       const r = parseKm(kmInput.value);
       kmHint.textContent = KM_HINT;
-      if (r && Number.isNaN(r.km)) { setError(kmInput, "Tarkista lukema. Kirjoita se numeroina, esim. 152 000."); return; }
+      if (r && Number.isNaN(r.km)) { setError(kmInput, "Tarkista lukema. Kirjoita se numeroina, esim. 152 000.", true); return; }
       setError(kmInput, "");
       if (!r) return;
       kmInput.value = fmtKm(r.km);
@@ -420,13 +420,33 @@
       target?.focus();
     });
 
-    const setError = (field, message) => {
+    /* Yksi yhteinen ilmoitusalue ruudunlukijalle: kentästä poistuttaessa näkyviin tuleva virhe luetaan hetken
+       päästä, jottei se puhu seuraavan kentän päälle. Lähetyksessä kohdistus siirtyy virheelliseen kenttään,
+       jolloin virhe luetaan kentän kuvauksena (aria-describedby), eikä sitä ilmoiteta erikseen. */
+    const announcer = $("#lomake-ilmoitus", form);
+    let announceTimer = null;
+    let announcedFor = null;
+    const announce = (input, message) => {
+      if (!announcer) return;
+      clearTimeout(announceTimer);
+      if (!message) {
+        if (announcedFor === input) { announcer.textContent = ""; announcedFor = null; }
+        return;
+      }
+      const label = input.labels?.[0]?.firstChild?.textContent?.trim() || "";
+      announcedFor = input;
+      announcer.textContent = "";
+      announceTimer = setTimeout(() => { announcer.textContent = label ? `${label}: ${message}` : message; }, 500);
+    };
+
+    const setError = (field, message, spoken = false) => {
       const input = typeof field === "string" ? $(`#${field}`, form) : field;
       const isSet = input.tagName === "FIELDSET";
       const err = $(`#${isSet ? "tyot" : input.id}-virhe`, form);
       const targets = isSet ? $$('input[name="tyo"]', input) : [input];
       targets.forEach((el) => el.setAttribute("aria-invalid", message ? "true" : "false"));
       if (err) err.textContent = message || "";
+      if (spoken || !message) announce(input, message);
       return !message;
     };
 
@@ -507,7 +527,7 @@
     const touched = new Set();
     CHECKED.forEach((id) => {
       const el = $(`#${id}`, form);
-      onLeave(el, () => { if (touched.has(id)) setError(el, CHECKS[id](values())); });
+      onLeave(el, () => { if (touched.has(id)) setError(el, CHECKS[id](values()), true); });
     });
 
     const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);

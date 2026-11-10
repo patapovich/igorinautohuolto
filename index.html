@@ -29,8 +29,8 @@
 
   <link rel="preload" href="assets/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" as="image" type="image/avif" imagesrcset="assets/img/hero-mekaanikko-640.avif 640w, assets/img/hero-mekaanikko-1200.avif 1200w, assets/img/hero-mekaanikko-1920.avif 1920w" imagesizes="(max-width: 860px) 96vw, (max-width: 1270px) 75vw, 970px" fetchpriority="high">
-  <link rel="stylesheet" href="assets/css/style.css?v=7b1a6462">
-  <script src="assets/js/main.js?v=7b1a6462" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=62dbfd21">
+  <script src="assets/js/main.js?v=62dbfd21" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"AutoRepair","@id":"https://igorinautohuolto.fi/#korjaamo","name":"Igorin Autohuolto","legalName":"Tmi Igor Tommonen","alternateName":"IA Autohuolto","slogan":"Huollan autoasi kuin omaani","description":"Autokorjaamo Vantaan Kelatiellä: huollot, vianhaku ja korjaukset kaikkiin automerkkeihin. Alan kokemusta vuodesta 1993.","url":"https://igorinautohuolto.fi/","logo":"https://igorinautohuolto.fi/assets/icons/icon-512.png","image":"https://igorinautohuolto.fi/assets/og.jpg","telephone":"+358503058726","email":"igor@igorinautohuolto.fi","identifier":{"@type":"PropertyValue","propertyID":"Y-tunnus","value":"2759519-8"},"address":{"@type":"PostalAddress","streetAddress":"Kelatie 9 C 2","postalCode":"01450","addressLocality":"Vantaa","addressCountry":"FI"},"geo":{"@type":"GeoCoordinates","latitude":60.3510245,"longitude":25.0384383},"hasMap":"https://www.google.com/maps/search/?api=1&query=60.3510245%2C25.0384383","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":["Vantaa","Tuusula","Kerava"],"knowsLanguage":"fi"}</script>
 </head>
 <body>
@@ -77,7 +77,7 @@
         </ul>
       </div>
       <figure class="hero__media">
-        <picture><source type="image/avif" srcset="assets/img/hero-mekaanikko-640.avif 640w, assets/img/hero-mekaanikko-1200.avif 1200w, assets/img/hero-mekaanikko-1920.avif 1920w" sizes="(max-width: 860px) 96vw, (max-width: 1270px) 75vw, 970px"><source type="image/webp" srcset="assets/img/hero-mekaanikko-640.webp 640w, assets/img/hero-mekaanikko-1200.webp 1200w, assets/img/hero-mekaanikko-1920.webp 1920w" sizes="(max-width: 860px) 96vw, (max-width: 1270px) 75vw, 970px"><img src="assets/img/hero-mekaanikko-1200.jpg" srcset="assets/img/hero-mekaanikko-640.jpg 640w, assets/img/hero-mekaanikko-1200.jpg 1200w, assets/img/hero-mekaanikko-1920.jpg 1920w" sizes="(max-width: 860px) 96vw, (max-width: 1270px) 75vw, 970px" width="1200" height="803" alt="Igor Tommonen korjaa telineeseen kiinnitettyä moottoria." fetchpriority="high" decoding="async"></picture>
+        <picture><source type="image/avif" srcset="assets/img/hero-mekaanikko-640.avif 640w, assets/img/hero-mekaanikko-1200.avif 1200w, assets/img/hero-mekaanikko-1920.avif 1920w" sizes="(max-width: 860px) 34vw, (max-width: 1270px) 75vw, 970px"><source type="image/webp" srcset="assets/img/hero-mekaanikko-640.webp 640w, assets/img/hero-mekaanikko-1200.webp 1200w, assets/img/hero-mekaanikko-1920.webp 1920w" sizes="(max-width: 860px) 34vw, (max-width: 1270px) 75vw, 970px"><img src="assets/img/hero-mekaanikko-1200.jpg" srcset="assets/img/hero-mekaanikko-640.jpg 640w, assets/img/hero-mekaanikko-1200.jpg 1200w, assets/img/hero-mekaanikko-1920.jpg 1920w" sizes="(max-width: 860px) 34vw, (max-width: 1270px) 75vw, 970px" width="1200" height="803" alt="Igor Tommonen korjaa telineeseen kiinnitettyä moottoria." fetchpriority="high" decoding="async"></picture>
         <figcaption><b>Igor Tommonen</b> on korjannut autoja vuodesta 1993.</figcaption>
       </figure>
     </div>
@@ -271,7 +271,7 @@
               <label class="chip"><input type="checkbox" name="tyo" value="Sähkötyöt"><span>Sähkötyöt</span></label>
               <label class="chip"><input type="checkbox" name="tyo" value="Muu korjaus"><span>Muu korjaus</span></label>
             </div>
-            <p class="field__error" id="tyot-virhe" aria-live="polite"></p>
+            <p class="field__error" id="tyot-virhe"></p>
             <div class="subq" id="akseli-kentta" hidden>
               <fieldset id="akseli">
                 <legend>Etu- vai takajarrut? <span class="opt">(valinnainen)</span></legend>
@@ -299,9 +299,9 @@
             <label for="rekisteri">Rekisterinumero</label>
             <div class="plate">
               <span class="plate__band" aria-hidden="true"><svg class="plate__stars" viewBox="0 0 12 12" fill="#ffcc00"><circle cx="6.00" cy="1.80" r="0.75"/><circle cx="8.10" cy="2.36" r="0.75"/><circle cx="9.64" cy="3.90" r="0.75"/><circle cx="10.20" cy="6.00" r="0.75"/><circle cx="9.64" cy="8.10" r="0.75"/><circle cx="8.10" cy="9.64" r="0.75"/><circle cx="6.00" cy="10.20" r="0.75"/><circle cx="3.90" cy="9.64" r="0.75"/><circle cx="2.36" cy="8.10" r="0.75"/><circle cx="1.80" cy="6.00" r="0.75"/><circle cx="2.36" cy="3.90" r="0.75"/><circle cx="3.90" cy="2.36" r="0.75"/></svg><span>FIN</span></span>
-              <input id="rekisteri" name="rekisteri" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required maxlength="12" placeholder="ABC-123" aria-describedby="rekisteri-virhe rekisteri-vihje">
+              <input id="rekisteri" name="rekisteri" type="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" required maxlength="12" placeholder="ABC-123" aria-describedby="rekisteri-virhe rekisteri-vihje">
             </div>
-            <p class="field__error" id="rekisteri-virhe" aria-live="polite"></p>
+            <p class="field__error" id="rekisteri-virhe"></p>
             <p class="field__hint" id="rekisteri-vihje" aria-live="polite">Rekisterinumeron avulla tarkistamme oikeat osat, ja hinta-arvio on tarkempi.</p>
             <label class="check"><input type="checkbox" id="ei-rekisteria" name="ei_rekisteria" value="1"><span>En tiedä rekisterinumeroa tai autossa ei ole sitä</span></label>
           </div>
@@ -311,42 +311,42 @@
               <input id="km" name="km" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Esim. 152&#160;000" aria-describedby="km-virhe km-vihje">
               <span class="unit__label" aria-hidden="true">km</span>
             </div>
-            <p class="field__error" id="km-virhe" aria-live="polite"></p>
+            <p class="field__error" id="km-virhe"></p>
             <p class="field__hint" id="km-vihje" aria-live="polite">Likimääräinen lukema riittää. Määräaikaishuollossa lukema tarvitaan, koska huollon sisältö riippuu siitä.</p>
           </div>
           <div class="field field--full">
             <label for="auto">Auton merkki ja malli <span class="opt" id="auto-valinnainen">(valinnainen)</span></label>
             <input id="auto" name="auto" type="text" autocomplete="off" maxlength="80" placeholder="Esim. Toyota Corolla 2012, bensiini" aria-describedby="auto-virhe">
-            <p class="field__error" id="auto-virhe" aria-live="polite"></p>
+            <p class="field__error" id="auto-virhe"></p>
           </div>
           <div class="field field--full">
             <label for="lisatiedot">Lisätiedot <span class="opt">(valinnainen)</span></label>
             <ul class="field__hint hints" id="lisatiedot-vihje"><li>Kerro omin sanoin, mitä autossa tapahtuu ja milloin.</li></ul>
             <textarea id="lisatiedot" name="lisatiedot" rows="4" maxlength="2000" placeholder="Esim. kolina edestä jarruttaessa tai moottorin merkkivalo palaa." aria-describedby="lisatiedot-vihje"></textarea>
           </div>
+          <fieldset class="field field--full" id="ajankohta">
+            <legend>Toivottu ajankohta</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="ajankohta" value="Mahdollisimman pian" checked><span>Mahdollisimman pian</span></label>
+              <label class="chip"><input type="radio" name="ajankohta" value="Tällä viikolla"><span>Tällä viikolla</span></label>
+              <label class="chip"><input type="radio" name="ajankohta" value="Ensi viikolla"><span>Ensi viikolla</span></label>
+              <label class="chip"><input type="radio" name="ajankohta" value="Joustava"><span>Joustava</span></label>
+            </div>
+          </fieldset>
           <div class="field">
             <label for="nimi">Nimi</label>
             <input id="nimi" name="nimi" type="text" autocomplete="name" required maxlength="80" aria-describedby="nimi-virhe">
-            <p class="field__error" id="nimi-virhe" aria-live="polite"></p>
+            <p class="field__error" id="nimi-virhe"></p>
           </div>
           <div class="field">
             <label for="puhelin">Puhelinnumero</label>
             <input id="puhelin" name="puhelin" type="tel" autocomplete="tel" inputmode="tel" required maxlength="30" aria-describedby="puhelin-virhe">
-            <p class="field__error" id="puhelin-virhe" aria-live="polite"></p>
+            <p class="field__error" id="puhelin-virhe"></p>
           </div>
-          <div class="field">
-            <label for="ajankohta">Toivottu ajankohta</label>
-            <select id="ajankohta" name="ajankohta">
-              <option>Mahdollisimman pian</option>
-              <option>Tällä viikolla</option>
-              <option>Ensi viikolla</option>
-              <option>Joustava</option>
-            </select>
-          </div>
-          <div class="field">
+          <div class="field field--full">
             <label for="sahkoposti">Sähköposti <span class="opt">(valinnainen)</span></label>
-            <input id="sahkoposti" name="sahkoposti" type="email" autocomplete="email" maxlength="120" aria-describedby="sahkoposti-virhe">
-            <p class="field__error" id="sahkoposti-virhe" aria-live="polite"></p>
+            <input id="sahkoposti" name="sahkoposti" type="email" autocomplete="email" enterkeyhint="send" maxlength="120" aria-describedby="sahkoposti-virhe">
+            <p class="field__error" id="sahkoposti-virhe"></p>
           </div>
           <div class="hp" aria-hidden="true">
             <label for="website">Jätä tämä kenttä tyhjäksi</label>
@@ -364,6 +364,7 @@
           <p class="form__note" id="lomake-huomautus">Tiedot menevät vain korjaamolle, ja hinta-arvio lasketaan automaattisesti. <a href="tietosuoja/">Lue tietosuojaseloste</a>.</p>
         </div>
 
+        <p class="vh" id="lomake-ilmoitus" aria-live="polite"></p>
         <div class="form__result" id="lomake-tulos" hidden tabindex="-1" aria-live="polite"></div>
       </form>
     </div>
