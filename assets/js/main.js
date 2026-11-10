@@ -230,7 +230,6 @@
     const noPlate = $("#ei-rekisteria", form);
     const car = $("#auto", form);
     const carOpt = $("#auto-valinnainen", form);
-    const kmField = $("#km-kentta", form);
     const kmInput = $("#km", form);
     const kmHint = $("#km-vihje", form);
     const kmOpt = $("#km-valinnainen", form);
@@ -323,8 +322,9 @@
 
     /* Tarkentavat kentät näkyvät vain valittujen töiden mukaan. Piilossa olevat kentät
        ovat pois käytöstä, joten niiden arvoja ei lähetetä. */
-    const KM_JOBS = ["Määräaikaishuolto", "Öljynvaihto", "Katsastushuolto", "Jakohihna"];
     const KM_NEEDED = ["Määräaikaishuolto", "Jakohihna"]; // näissä lukema tarvitaan hinta-arvioon
+    const KM_REQUIRED = "Määräaikaishuolto"; // huollon sisältö ja hinta riippuvat lukemasta: pakollinen
+    const KM_MISSING = "Kirjoita mittarilukema. Likimääräinen lukema riittää, esim. 150 000.";
     const reveal = (block, on) => {
       block.hidden = !on;
       $$("input", block).forEach((el) => { el.disabled = !on; });
@@ -333,8 +333,11 @@
       const jobs = $$('input[name="tyo"]:checked', form).map((el) => el.value);
       reveal(axleField, jobs.includes("Jarrut"));
       reveal(tyreField, jobs.includes("Renkaat"));
-      reveal(kmField, KM_JOBS.some((j) => jobs.includes(j)));
-      kmOpt.hidden = KM_NEEDED.some((j) => jobs.includes(j));
+      // Mittarilukema näkyy aina: valinnainen, paitsi määräaikaishuollossa.
+      const kmRequired = jobs.includes(KM_REQUIRED);
+      kmOpt.hidden = kmRequired;
+      kmInput.setAttribute("aria-required", String(kmRequired));
+      if (!kmRequired && $("#km-virhe", form).textContent === KM_MISSING) setError(kmInput, ""); // ehto ensin: setError määritellään myöhemmin
     }
 
     // Ilman rekisterinumeroa auton merkki ja malli on pakollinen.
@@ -478,10 +481,16 @@
     };
     const CHECKED = Object.keys(CHECKS);
 
+    /* Määräaikaishuollossa lukema on pakollinen. Lukema lisätiedoissa ("n. 180 tkm") tai tunnistamaton
+       teksti kentässä (lähetetään sellaisenaan) kelpaa. true = lukema puuttuu. */
+    const kmMissing = (v) => v.tyot.includes(KM_REQUIRED) && v.km === null && !v.kmText && !KM_IN_TEXT.test(v.lisatiedot);
+
     function validate(v) {
+      if (!kmMissing(v) && $("#km-virhe", form).textContent === KM_MISSING) setError(kmInput, "");
       const checks = [
         setError(fieldset, v.tyot.length || v.lisatiedot
           ? "" : "Valitse vähintään yksi työ tai kerro lisätiedoissa, mitä autolle pitäisi tehdä."),
+        ...(kmMissing(v) ? [setError(kmInput, KM_MISSING)] : []),
         ...CHECKED.map((id) => setError(id, CHECKS[id](v))),
       ];
       return checks.every(Boolean);
@@ -608,7 +617,8 @@
       e.preventDefault();
       const v = values();
       if (!validate(v)) {
-        $('[aria-invalid="true"]:not(#km)', form)?.focus(); // ensimmäinen estävä virhe sivun järjestyksessä
+        // Ensimmäinen estävä virhe sivun järjestyksessä. Lukeman muotovirhe ei estä, puuttuva lukema estää.
+        $(`[aria-invalid="true"]${kmMissing(v) ? "" : ":not(#km)"}`, form)?.focus();
         return;
       }
       const msg = compose(v);

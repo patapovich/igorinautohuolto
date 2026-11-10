@@ -29,8 +29,8 @@
 
   <link rel="preload" href="assets/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" as="image" type="image/avif" imagesrcset="assets/img/hero-mekaanikko-640.avif 640w, assets/img/hero-mekaanikko-1200.avif 1200w, assets/img/hero-mekaanikko-1920.avif 1920w" imagesizes="(max-width: 860px) 96vw, (max-width: 1270px) 75vw, 970px" fetchpriority="high">
-  <link rel="stylesheet" href="assets/css/style.css?v=dd7750a3">
-  <script src="assets/js/main.js?v=dd7750a3" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=7b1a6462">
+  <script src="assets/js/main.js?v=7b1a6462" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"AutoRepair","@id":"https://igorinautohuolto.fi/#korjaamo","name":"Igorin Autohuolto","legalName":"Tmi Igor Tommonen","alternateName":"IA Autohuolto","slogan":"Huollan autoasi kuin omaani","description":"Autokorjaamo Vantaan Kelatiellä: huollot, vianhaku ja korjaukset kaikkiin automerkkeihin. Alan kokemusta vuodesta 1993.","url":"https://igorinautohuolto.fi/","logo":"https://igorinautohuolto.fi/assets/icons/icon-512.png","image":"https://igorinautohuolto.fi/assets/og.jpg","telephone":"+358503058726","email":"igor@igorinautohuolto.fi","identifier":{"@type":"PropertyValue","propertyID":"Y-tunnus","value":"2759519-8"},"address":{"@type":"PostalAddress","streetAddress":"Kelatie 9 C 2","postalCode":"01450","addressLocality":"Vantaa","addressCountry":"FI"},"geo":{"@type":"GeoCoordinates","latitude":60.3510245,"longitude":25.0384383},"hasMap":"https://www.google.com/maps/search/?api=1&query=60.3510245%2C25.0384383","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"}],"areaServed":["Vantaa","Tuusula","Kerava"],"knowsLanguage":"fi"}</script>
 </head>
 <body>
@@ -288,14 +288,14 @@
             <p class="field__hint" id="rekisteri-vihje" aria-live="polite">Rekisterinumeron avulla tarkistamme oikeat osat, ja hinta-arvio on tarkempi.</p>
             <label class="check"><input type="checkbox" id="ei-rekisteria" name="ei_rekisteria" value="1"><span>En tiedä rekisterinumeroa tai autossa ei ole sitä</span></label>
           </div>
-          <div class="field" id="km-kentta" hidden>
+          <div class="field" id="km-kentta">
             <label for="km">Mittarilukema<span class="vh"> kilometreinä</span> <span class="opt" id="km-valinnainen">(valinnainen)</span></label>
             <div class="unit">
-              <input id="km" name="km" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Esim. 152&#160;000" aria-describedby="km-virhe km-vihje" disabled>
+              <input id="km" name="km" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Esim. 152&#160;000" aria-describedby="km-virhe km-vihje">
               <span class="unit__label" aria-hidden="true">km</span>
             </div>
             <p class="field__error" id="km-virhe" aria-live="polite"></p>
-<p class="field__hint" id="km-vihje" aria-live="polite">Huollon sisältö riippuu kilometreistä. Likimääräinen lukema riittää.</p>
+            <p class="field__hint" id="km-vihje" aria-live="polite">Likimääräinen lukema riittää. Määräaikaishuollossa lukema tarvitaan, koska huollon sisältö riippuu siitä.</p>
           </div>
           <div class="field field--full">
             <label for="auto">Auton merkki ja malli <span class="opt" id="auto-valinnainen">(valinnainen)</span></label>
