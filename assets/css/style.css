@@ -1356,6 +1356,25 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 .prose__quote blockquote p::after { content: "\201D"; }
 .prose__quote figcaption { margin-top: 0.4rem; font-size: 0.9rem; color: var(--teksti-2); }
 .prose__links { columns: 2; column-gap: 2rem; }
+
+.service-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: 0 clamp(1.5rem, 4vw, 3.5rem);
+  margin: 0;
+  padding: 0;
+}
+.service-list a {
+  display: block;
+  height: 100%;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--viiva);
+  text-decoration: none;
+}
+.service-list b { display: block; font-size: 1.15rem; font-weight: 750; }
+.service-list span { display: block; margin-top: 0.25rem; font-size: 0.95rem; color: var(--teksti-2); }
+.service-list a:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .prose a { text-underline-offset: 3px; }
 
 .board li a { text-underline-offset: 3px; }

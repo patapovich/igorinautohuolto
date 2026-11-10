@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://igorinautohuolto.fi/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/maaraaikaishuolto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/jarrut/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/katsastushuolto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/vianhaku/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/jakohihnan-vaihto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/renkaat/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/vetokoukun-asennus/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/oljynvaihto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/sahkotyot/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/moottorikorjaukset/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/kytkin-ja-vaihteisto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/pakoputkisto/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/palvelut/alusta-ja-ohjaus/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://igorinautohuolto.fi/tietosuoja/</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://igorinautohuolto.fi/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/maaraaikaishuolto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/jarrut/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/katsastushuolto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/vianhaku/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/jakohihnan-vaihto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/renkaat/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/vetokoukun-asennus/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/oljynvaihto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/sahkotyot/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/moottorikorjaukset/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/kytkin-ja-vaihteisto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/pakoputkisto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/alusta-ja-ohjaus/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/lohkolammittimen-asennus/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/palvelut/pyoranlaakerin-vaihto/</loc></url>
+  <url><loc>https://igorinautohuolto.fi/tietosuoja/</loc></url>
 </urlset>
