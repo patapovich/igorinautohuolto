@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-eEejKqCuXLJnXlPE+hLofs25O3a5eM30ZNYWBBt2cqU='; style-src 'sha256-zrFK4STlR6Grxav1h9cKocAVqpCfJ4B/o5BMO23ovpE='; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AYtQMtTDklQa6KBlFwnUkA6h/OmXDw7O63fg53jweHo='; style-src 'sha256-zrFK4STlR6Grxav1h9cKocAVqpCfJ4B/o5BMO23ovpE='; img-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -66,16 +66,19 @@
   <p class="tila" id="tila" aria-live="polite"></p>
   <noscript><p>Linkki toimii vain, kun JavaScript on käytössä.</p></noscript>
 </main>
-<script>/* Välisivu /vastaa/. Igorille tulevan viestin tekstiviesti- ja kustannusarviopainikkeet osoittavat
-   tänne, jotta linkit ovat omassa verkkotunnuksessa (sähköposti ja puhelu ovat viestissä suoria
-   mailto:- ja tel:-linkkejä). Sivu avaa valmiin sähköpostin, tekstiviestin, puhelun tai
-   kustannusarvion.
+<script>/* Välisivu /vastaa/. Igorille tulevan viestin tekstiviesti-, kustannusarvio- ja Nimark-painikkeet
+   osoittavat tänne, jotta linkit ovat omassa verkkotunnuksessa (sähköposti ja puhelu ovat viestissä
+   suoria mailto:- ja tel:-linkkejä). Sivu avaa valmiin sähköpostin, tekstiviestin, puhelun,
+   kustannusarvion tai auton osat Nimarkin verkkokaupassa.
 
    Linkki: https://igorinautohuolto.fi/vastaa/#<base64url(UTF-8 JSON), ilman =-täytettä>
      {"t":"mailto","to":"<sähköposti>","s":"<aihe>","b":"<viesti>"}   s ja b valinnaisia
      {"t":"sms","to":"<puhelin>","b":"<viesti>"}                       b valinnainen
      {"t":"tel","to":"<puhelin>"}
      {"t":"arvio","id":<kokonaisluku>}             -> https://oma.autokorjaamo.fi/basket/<id>
+     {"t":"nimark","k":<kokonaisluku>}             -> Nimarkin autosivu TecDoc-ajoneuvotunnisteella (KType):
+       https://www.nimark.fi/?locale=fi&action=catalog_assemblage_view&data%5bid_model_detail%5d=<k>
+       (Nimark ohjaa sen auton sivulle /cars/…-<sarja>-<k>/)
 
    Tiedot ovat vain fragmentissa, joten ne eivät lähde selaimesta. Kaikki muu hylätään, eikä
    linkin tekstiä koskaan tulkita HTML:ksi (vain textContent). build.py upottaa tämän sivulle,
@@ -87,10 +90,12 @@
   const EMAIL = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
   const PHONE = /^\+?[0-9]{6,15}$/; // välilyönnit, yhdysmerkit ja sulkeet poistettu
   const ID = /^[0-9]{1,12}$/;
+  const KTYPE = /^[1-9][0-9]{0,8}$/; // TecDoc-ajoneuvotunniste
+  const NIMARK = "https://www.nimark.fi/?locale=fi&action=catalog_assemblage_view&data%5bid_model_detail%5d=";
   const CTRL = /[\u0000-\u001f\u007f]/; // vastaanottaja ja aihe
   const CTRL_BODY = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/; // viestissä \t, \n ja \r sallittuja
-  const KEYS = { mailto: ["to", "s", "b"], sms: ["to", "b"], tel: ["to"], arvio: ["id"] };
-  const ALLOWED = /^(?:mailto:|sms:|tel:|https:\/\/oma\.autokorjaamo\.fi\/basket\/[0-9]{1,12}$)/;
+  const KEYS = { mailto: ["to", "s", "b"], sms: ["to", "b"], tel: ["to"], arvio: ["id"], nimark: ["k"] };
+  const ALLOWED = /^(?:mailto:|sms:|tel:|https:\/\/oma\.autokorjaamo\.fi\/basket\/[0-9]{1,12}$|https:\/\/www\.nimark\.fi\/\?locale=fi&action=catalog_assemblage_view&data%5bid_model_detail%5d=[1-9][0-9]{0,8}$)/;
 
   function decode(hash) {
     const s = String(hash == null ? "" : hash).replace(/^#/, "");
@@ -131,6 +136,9 @@
       if (!to || !text(o.b, 2000, CTRL_BODY)) return null;
       // "?&body=" toimii sekä Androidissa että iPhonessa.
       url = o.t === "tel" ? `tel:${to}` : `sms:${to}${o.b ? `?&body=${enc(o.b.replace(/\r\n?/g, "\n"))}` : ""}`;
+    } else if (o.t === "nimark") {
+      if (typeof o.k !== "number" || !Number.isInteger(o.k) || !KTYPE.test(String(o.k))) return null;
+      url = `${NIMARK}${o.k}`;
     } else {
       if (typeof o.id !== "number" || !Number.isInteger(o.id) || !ID.test(String(o.id))) return null;
       url = `https://oma.autokorjaamo.fi/basket/${o.id}`;
@@ -149,6 +157,7 @@
     sms: ["Tekstiviesti asiakkaalle", "Valmis viesti avautuu viestisovellukseen.", "Avaa tekstiviesti", "Numero"],
     tel: ["Soita asiakkaalle", "Numero avautuu puhelinsovellukseen.", "Soita", "Numero"],
     arvio: ["Kustannusarvio", "Kustannusarvio avautuu Autokorjaamo.fi:ssä.", "Avaa kustannusarvio", ""],
+    nimark: ["Osat Nimarkista", "Auton osat avautuvat Nimarkin verkkokaupassa.", "Avaa Nimark", ""],
   };
   let message = "";
   let renders = 0;
