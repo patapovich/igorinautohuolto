@@ -35,7 +35,7 @@
 <main>
   <a class="back" href="/">← Igorin Autohuolto</a>
   <h1>Tietosuojaseloste</h1>
-  <p class="lead">Tässä kerrotaan, mitä tietoja hinta-arviolomake kerää ja mihin niitä käytetään.</p>
+  <p class="lead">Tässä kerrotaan, mitä tietoja sivusto ja hinta-arviolomake keräävät ja mihin niitä käytetään.</p>
 
   <h2>Rekisterinpitäjä</h2>
   <address>
@@ -46,31 +46,36 @@
   </address>
 
   <h2>Mitä tietoja keräämme</h2>
-  <p>Keräämme vain tiedot, jotka annat itse hinta-arviolomakkeella, sähköpostilla tai puhelimessa:</p>
+  <p>Keräämme tiedot, jotka annat itse hinta-arviolomakkeella, sähköpostilla tai puhelimessa:</p>
   <ul>
     <li>nimi, puhelinnumero ja sähköpostiosoite</li>
     <li>auton rekisterinumero, merkki, malli ja mittarilukema</li>
     <li>toivotut työt, toivottu ajankohta ja kirjoittamasi lisätiedot</li>
   </ul>
+  <p>Kun lähetät lomakkeen, myös IP-osoitteesi tallentuu lyhyeksi ajaksi roskalähetysten estämiseksi.</p>
 
   <h2>Mihin tietoja käytetään</h2>
-  <p>Käytämme tietoja hinta-arvion laskemiseen, pyyntöösi vastaamiseen sekä työn sopimiseen ja tekemiseen. Käsittely perustuu pyyntöösi eli sopimusta edeltäviin toimiin ja sopimuksen täyttämiseen. Tietoja ei käytetä markkinointiin eikä luovuteta muille omiin tarkoituksiin.</p>
+  <p>Käytämme tietoja hinta-arvion laskemiseen, pyyntöösi vastaamiseen sekä työn sopimiseen ja tekemiseen. Käsittely perustuu pyyntöösi eli sopimusta edeltäviin toimiin ja sopimuksen täyttämiseen.</p>
+  <p>Työn jälkeen Igor voi lähettää sinulle yhden tekstiviestin, jossa hän pyytää sinua arvioimaan korjaamon Googlessa. Tämä perustuu korjaamon oikeutettuun etuun. Jos et halua viestiä, kerro siitä. Puhelinnumeroasi ei käytetä muuhun markkinointiin, eikä tietoja luovuteta muille omiin tarkoituksiin.</p>
 
   <h2>Miten lomakkeen tiedot kulkevat</h2>
   <p>Lomake lähettää tiedot korjaamolle sähköpostina. Samalla hinta-arvio lasketaan automaattisesti, ja Igor tarkistaa sen ennen vastaamista. Käsittelyssä käytetään näitä palveluja:</p>
   <ul>
-    <li><b>Cloudflare</b> vastaanottaa lomakkeen, estää roskalähetykset (Turnstile) ja tulkitsee pyynnön tekoälyn avulla. Tekoälylle menevästä tekstistä poistetaan ensin nimi, puhelinnumero, sähköpostiosoite ja rekisterinumero. Roskalähetysten estämiseksi IP-osoitteesi säilyy enintään kaksi tuntia ja lähettämätön pyyntö enintään vuorokauden.</li>
+    <li><b>Cloudflare</b> vastaanottaa lomakkeen, estää roskalähetykset (Turnstile) ja tulkitsee pyynnön tekoälyn avulla. Roskalähetysten esto käynnistyy jo, kun alat täyttää lomaketta, ja Cloudflare saa silloin IP-osoitteesi ja selaimesi tiedot. Tekoälylle menevästä tekstistä poistetaan ensin nimi, puhelinnumero, sähköpostiosoite ja rekisterinumero. Roskalähetysten estämiseksi IP-osoitteesi säilyy enintään kaksi tuntia ja lähettämätön pyyntö enintään vuorokauden.</li>
     <li><b>Resend</b> välittää pyynnön sähköpostina korjaamolle.</li>
     <li><b>Autokorjaamo.fi</b> on korjaamon käyttämä korjaamo-ohjelmisto. Sinne tallentuu kustannusarvio, auton tiedot ja yhteystietosi.</li>
   </ul>
-  <p>Cloudflare ja Resend ovat yhdysvaltalaisia yrityksiä, joten tietoja voidaan käsitellä myös EU:n ulkopuolella. Siirroissa noudatetaan EU:n tietosuoja-asetuksen mukaisia suojatoimia.</p>
 
   <h2>Kuinka kauan tietoja säilytetään</h2>
   <p>Säilytämme tietoja niin kauan kuin pyynnön käsittely ja siihen liittyvä työ vaativat. Laskutukseen liittyvät tiedot säilytämme kirjanpitolain vaatiman ajan.</p>
 
-  <h2>Evästeet ja kävijälaskenta</h2>
-  <p>Sivusto ei käytä evästeitä. Kävijämäärät lasketaan Cloudflare Web Analytics -palvelulla, joka ei käytä evästeitä eikä tunnista yksittäisiä kävijöitä. Palvelu saa sivun osoitteen, sivun, jolta tulit, selaimen ja laitteen tyypin, maan sekä sivun latausajat.</p>
+  <h2>Sivuston palvelin, evästeet ja kävijälaskenta</h2>
+  <p>Sivusto on GitHub Pages -palvelussa, jota ylläpitää yhdysvaltalainen GitHub. Kun avaat sivun, palvelu saa IP-osoitteesi ja pyytämäsi sivun osoitteen.</p>
+  <p>Sivusto ei käytä evästeitä. Kävijämäärät lasketaan Cloudflare Web Analytics -palvelulla, joka ei käytä evästeitä eikä tunnista yksittäisiä kävijöitä. Palvelu näkee IP-osoitteesi, mutta ei tallenna sitä kävijän tunnisteeksi. Se saa sivun osoitteen, sivun, jolta tulit, selaimen ja laitteen tyypin, maan sekä sivun latausajat.</p>
   <p>Kartta on sivustolle tallennettu kuva, joten sen katsominen ei lähetä tietojasi karttapalveluun.</p>
+
+  <h2>Tietojen siirto EU:n ulkopuolelle</h2>
+  <p>GitHub, Cloudflare ja Resend ovat yhdysvaltalaisia yrityksiä, joten tietoja voidaan käsitellä myös EU:n ulkopuolella. Siirroissa noudatetaan EU:n tietosuoja-asetuksen mukaisia suojatoimia.</p>
 
   <h2>Oikeutesi</h2>
   <p>Voit pyytää nähtäväksi itseäsi koskevat tiedot sekä pyytää niiden oikaisemista tai poistamista. Ota yhteyttä sähköpostilla tai puhelimitse. Jos katsot, että tietojasi käsitellään lainvastaisesti, voit tehdä valituksen <a href="https://tietosuoja.fi/" rel="noopener">tietosuojavaltuutetulle</a>.</p>

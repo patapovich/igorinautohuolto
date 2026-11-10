@@ -893,6 +893,7 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 /* Tarkentava kysymys valitun työn alla: kultainen viiva sitoo sen valintaan */
 .subq { margin-top: 0.95rem; padding-left: 1rem; border-left: 2px solid var(--kulta); }
 .subq fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.subq fieldset + fieldset { margin-top: 0.75rem; }
 .field .subq legend { margin-bottom: 0.4rem; font-size: 0.9rem; }
 .subq .field__hint { margin-top: 0.45rem; }
 .chips--sm .chip input { min-height: 0; }

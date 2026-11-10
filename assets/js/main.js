@@ -233,8 +233,9 @@
     const kmInput = $("#km", form);
     const kmHint = $("#km-vihje", form);
     const kmOpt = $("#km-valinnainen", form);
-    const axleField = $("#akseli-kentta", form);
-    const tyreField = $("#renkaat-kentta", form);
+    const axleField = $("#akseli-kentta", form); // akseli ja jarrutyö
+    const inspField = $("#katsastus-kentta", form);
+    const tyreField = $("#renkaat-kentta", form); // piilokenttä: pyörien vaihto
     const notes = $("#lisatiedot", form);
     const hintList = $("#lisatiedot-vihje", form);
     const needs = $("#tarvitaan", form);
@@ -325,13 +326,16 @@
     const KM_NEEDED = ["Määräaikaishuolto", "Jakohihna"]; // näissä lukema tarvitaan hinta-arvioon
     const KM_REQUIRED = "Määräaikaishuolto"; // huollon sisältö ja hinta riippuvat lukemasta: pakollinen
     const KM_MISSING = "Kirjoita mittarilukema. Likimääräinen lukema riittää, esim. 150 000.";
+    // Välimuistissa voi olla vanha sivu ilman uusia kenttiä (esim. #katsastus-kentta): puuttuva kohta ohitetaan.
     const reveal = (block, on) => {
+      if (!block) return;
       block.hidden = !on;
       $$("input", block).forEach((el) => { el.disabled = !on; });
     };
     function syncJobs() {
       const jobs = $$('input[name="tyo"]:checked', form).map((el) => el.value);
       reveal(axleField, jobs.includes("Jarrut"));
+      reveal(inspField, jobs.includes("Katsastushuolto"));
       reveal(tyreField, jobs.includes("Renkaat"));
       // Mittarilukema näkyy aina: valinnainen, paitsi määräaikaishuollossa.
       const kmRequired = jobs.includes(KM_REQUIRED);
@@ -354,21 +358,30 @@
        mitä hinta-arvioon vielä tarvitaan. Lista ei estä lähettämistä. */
     const HINTS = {
       "Määräaikaishuolto": ["kerro, milloin auto on viimeksi huollettu.", "Esim. edellinen huolto noin vuosi sitten, huoltovalo palaa."],
-      "Öljynvaihto": ["kerro, milloin öljy on viimeksi vaihdettu.", "Esim. öljy vaihdettiin viimeksi noin vuosi sitten."],
+      "Jarrut": ["kerro, mitä jarruttaessa kuuluu tai tuntuu, esimerkiksi vinkunaa, kolinaa tai tärinää.", "Esim. edestä kuuluu vinkunaa jarruttaessa, ja ohjauspyörä tärisee."],
       "Katsastushuolto": ["kerro katsastuspäivä ja mahdolliset huomautukset tai hylkäyksen syyt.", "Esim. katsastus ensi kuussa. Viimeksi tuli huomautus etupyörän laakerista."],
       "Vianhaku": ["kerro, mitä oireita on, milloin ne ilmenevät ja palaako jokin merkkivalo.", "Esim. moottorin merkkivalo syttyi eilen, ja auto nykii kylmänä."],
-      "Jarrut": ["kerro, mitä jarruttaessa kuuluu tai tuntuu, esimerkiksi vinkunaa, kolinaa tai tärinää.", "Esim. edestä kuuluu vinkunaa jarruttaessa, ja ohjauspyörä tärisee."],
-      "Renkaat": ["", "Esim. talvirenkaat ovat jo vanteilla."], // tarkennus kysytään valinnoilla
+      "Sähkötyöt": ["kerro, mikä sähkölaite ei toimi tai mitä pitäisi asentaa.", "Esim. vasen takavalo ei pala, ja akku tyhjenee yön aikana."],
+      "Alusta ja ohjaus": ["kerro, kuuluuko ääni tai tuntuuko vika edestä vai takaa ja kummalta puolelta.", "Esim. oikealta edestä kuuluu kolinaa töyssyissä."],
+      "Öljynvaihto": ["kerro, milloin öljy on viimeksi vaihdettu.", "Esim. öljy vaihdettiin viimeksi noin vuosi sitten."],
+      "Renkaat": ["", "Esim. talvirenkaat ovat jo vanteilla."], // ei vihjettä: pyörät vaihdetaan valmiiksi vanteilla
       "Jakohihna": ["kerro, onko hihna vaihdettu aiemmin ja millä mittarilukemalla.", "Esim. hihna vaihdettiin viimeksi, kun mittarissa oli 90 000 km."],
-      "Sähkötyöt": ["kerro, mikä ei toimi tai mitä pitäisi asentaa.", "Esim. vasen takavalo ei pala."],
-      "Muu korjaus": ["kerro, mitä pitäisi korjata ja miten vika ilmenee.", "Esim. pakoputki kolisee alustaa vasten."],
+      "Muu korjaus": ["kerro, mitä pitäisi korjata tai asentaa ja miten vika ilmenee.", "Esim. pakoputki kolisee alustaa vasten."],
     };
+    const RECHECK = "Katsastuksen jälkinäyttö"; // lomakkeella ”Jälkitarkastus” (korjaamon lisäpalvelun nimi on arvona)
+    const INSPECTION_TEXT = { [RECHECK]: "jälkitarkastus" };
+    const OIL_IN_SERVICE = "sisältyy määräaikaishuoltoon, joten sitä ei tarvitse valita erikseen.";
+    const RECHECK_EXAMPLE = "Esim. auto hylättiin, koska vasen etujarruletku vuotaa.";
+    // Vihje ja esimerkki voivat riippua muista valinnoista.
+    const hintFor = (j, v) => (j === "Öljynvaihto" && v.tyot.includes("Määräaikaishuolto") ? OIL_IN_SERVICE : HINTS[j]?.[0]);
+    const exampleFor = (j, v) => (j === "Katsastushuolto" && v.katsastus.includes(RECHECK) ? RECHECK_EXAMPLE : HINTS[j][1]);
     const HINT_DEFAULT = hintList.textContent.trim();
     const PLACEHOLDER_DEFAULT = notes.placeholder;
     const KM_IN_TEXT = /\d\s*(t\.?\s*)?km\b|\d\s*(tkm|tuhatta)/i;
     const AXLE_IN_TEXT = /(^|[^a-zåäö])(etu|edes|taka|molem)/i;
-    const SYMPTOM_JOBS = ["Vianhaku", "Sähkötyöt", "Muu korjaus"];
+    const SYMPTOM_JOBS = ["Vianhaku", "Sähkötyöt", "Alusta ja ohjaus", "Muu korjaus"];
     const BRAKES = { etujarrut: "etujarrut", takajarrut: "takajarrut", molemmat: "etu- ja takajarrut", "en tiedä": "jarrut" };
+    const BRAKE_WORK = { palat: "palojen vaihto", levyt: "palojen ja levyjen vaihto", puhdistus: "puhdistus" };
     let lastChip = "";
     let started = false;
     let needsKey = null;
@@ -376,33 +389,42 @@
     function missing(v) {
       const has = (t) => v.tyot.includes(t);
       const out = [];
-      if (!v.tyot.length && !v.lisatiedot) out.push(["tyot", "valittu työ tai vian kuvaus"]);
+      if (!v.tyot.length && !v.lisatiedot) out.push(["tyot", "työ tai vian kuvaus"]);
       if (!v.eiRekisteria && !v.rekisteri) out.push(["rekisteri", "rekisterinumero"]);
       if (v.eiRekisteria && !v.auto) out.push(["auto", "auton merkki ja malli"]);
       if (KM_NEEDED.some(has) && v.km === null && !KM_IN_TEXT.test(v.lisatiedot)) {
         out.push(["km", "mittarilukema"]);
       }
       if (has("Jarrut") && !v.akseli && !AXLE_IN_TEXT.test(v.lisatiedot)) out.push(["akseli", "tieto etu- tai takajarruista"]);
-      if (has("Renkaat") && !v.renkaat.length && v.lisatiedot.length < 20) out.push(["renkaat", "tieto rengastyöstä"]);
-      if (SYMPTOM_JOBS.some(has) && v.lisatiedot.length < 20) out.push(["lisatiedot", "lyhyt kuvaus viasta tai työstä"]);
+      // Välimuistissa olevalla vanhalla sivulla ei ole katsastuspalvelujen valintaa: sitä ei silloin kysytä.
+      if (has("Katsastushuolto") && inspField && !v.katsastus.length && v.lisatiedot.length < 20) {
+        out.push(["katsastus", "tieto katsastuspalvelusta"]);
+      }
+      // Piilotettujen tarkennusten arvot ovat tyhjiä (values).
+      if (v.katsastus.includes(RECHECK) && v.lisatiedot.length < 20) out.push(["lisatiedot", "hylkäyksen syyt"]);
+      if (SYMPTOM_JOBS.some(has) && v.lisatiedot.length < 20 && !out.some(([id]) => id === "lisatiedot")) {
+        out.push(["lisatiedot", "lyhyt kuvaus viasta tai työstä"]);
+      }
       return out;
     }
 
     function guide(e) {
       const t = e?.target;
       if (t?.name === "tyo") lastChip = t.checked ? t.value : (lastChip === t.value ? "" : lastChip);
+      if (t?.name === "katsastus" && t.checked) lastChip = "Katsastushuolto"; // esimerkki vaihtuu jälkitarkastuksen mukaan
       const v = values();
-      if (!t || t.name === "tyo") {
-        const hinted = v.tyot.filter((j) => HINTS[j]?.[0]);
+      if (!t || t.name === "tyo" || t.name === "katsastus") {
+        const hinted = v.tyot.filter((j) => hintFor(j, v));
         hintList.innerHTML = hinted.length
-          ? hinted.map((j) => `<li><b>${j}:</b> ${HINTS[j][0]}</li>`).join("")
+          ? hinted.map((j) => `<li><b>${j}:</b> ${hintFor(j, v)}</li>`).join("")
           : `<li>${HINT_DEFAULT}</li>`;
         const ex = HINTS[lastChip] ? lastChip : v.tyot.find((j) => HINTS[j]);
-        notes.placeholder = ex ? HINTS[ex][1] : PLACEHOLDER_DEFAULT;
+        notes.placeholder = ex ? exampleFor(ex, v) : PLACEHOLDER_DEFAULT;
       }
       if (!started) return;
       const list = missing(v);
-      const key = list.map(([id]) => id).join();
+      // Sama kohta voi tarkoittaa eri asiaa (lisätiedot: hylkäyksen syyt tai kuvaus viasta), joten avaimessa on myös teksti.
+      const key = list.map(([id, label]) => `${id}:${label}`).join();
       if (key === needsKey) return; // ei turhaa uudelleenpiirtoa kirjoittaessa
       needsKey = key;
       needs.hidden = false;
@@ -411,11 +433,12 @@
       needsList.innerHTML = list.map(([id, label]) => `<li><button type="button" data-goto="${id}">${label}</button></li>`).join("");
     }
 
+    const SUBQ_IDS = ["akseli", "jarrutyo", "katsastus"]; // tarkennukset: kohdistus ensimmäiseen valintaan
     needsList.addEventListener("click", (e) => {
       const id = e.target.closest("[data-goto]")?.dataset.goto;
       if (!id) return;
       const target = id === "tyot" ? $('input[name="tyo"]', form)
-        : id === "akseli" || id === "renkaat" ? $(`#${id} input`, form)
+        : SUBQ_IDS.includes(id) ? $(`#${id} input`, form)
         : $(`#${id}`, form);
       target?.focus();
     });
@@ -470,6 +493,8 @@
         km: km && !Number.isNaN(km.km) ? km.km : null,
         kmText: km && Number.isNaN(km.km) ? kmRaw : "", // tunnistamaton lukema sellaisenaan
         akseli: data.get("akseli") || "",
+        jarrutyo: data.get("jarrutyo") || "",
+        katsastus: data.getAll("katsastus"),
         renkaat: data.getAll("renkaat"),
         lisatiedot: (data.get("lisatiedot") || "").trim(),
         ajankohta: data.get("ajankohta") || "",
@@ -531,27 +556,40 @@
     });
 
     const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
-    const jobLine = (t, v) => {
-      if (t === "Jarrut" && v.akseli) return BRAKES[v.akseli];
-      if (t === "Renkaat" && v.renkaat.length) return `renkaat: ${v.renkaat.map(lower).join(", ")}`;
-      return lower(t);
+    /* Työ ja sen tarkennukset kuten vastaanottimen viestissä: "etujarrut: palojen vaihto" viestissä,
+       "etujarrut (palojen vaihto)" aiheessa (paren). */
+    const jobLine = (t, v, paren = false) => {
+      let head = lower(t);
+      let rest = [];
+      if (t === "Jarrut" && (v.akseli || BRAKE_WORK[v.jarrutyo])) {
+        head = BRAKES[v.akseli] || "jarrut";
+        rest = BRAKE_WORK[v.jarrutyo] ? [BRAKE_WORK[v.jarrutyo]] : [];
+      } else if (t === "Katsastushuolto" && v.katsastus.length) {
+        rest = v.katsastus.map((k) => INSPECTION_TEXT[k] || lower(k));
+      } else if (t === "Renkaat" && v.renkaat.length) {
+        head = "renkaat";
+        rest = v.renkaat.map(lower);
+      }
+      if (!rest.length) return head;
+      return paren ? `${head} (${rest.join(", ")})` : `${head}: ${rest.join(", ")}`;
     };
 
     function compose(v) {
       const carText = [v.rekisteri, v.auto].filter(Boolean).join(", ");
-      const subject = `Hinta-arviopyyntö${carText ? ` – ${carText}` : ""}`;
-      const lines = [];
+      const works = v.tyot.map((t) => jobLine(t, v, true)).join(", ");
+      const subject = `Hinta-arviopyyntö: ${works || "korjaus"}${carText ? ` – ${carText}` : ""}`.slice(0, 150);
+      const lines = ["Hei,", ""];
       if (v.tyot.length) {
-        lines.push("Hei,", "", "pyydän hinta-arviota seuraavista töistä:");
+        lines.push("pyydän hinta-arviota.", "", "Työt:");
         v.tyot.forEach((t) => lines.push(`– ${jobLine(t, v)}`));
       } else {
-        lines.push("Hei,", "", "pyydän hinta-arviota autoni korjauksesta.");
+        lines.push("pyydän hinta-arviota autoni korjauksesta.");
       }
       if (v.lisatiedot) lines.push("", "Lisätiedot:", v.lisatiedot);
       lines.push("");
-      if (v.auto) lines.push(`Auto: ${v.auto}`);
       if (v.eiRekisteria) lines.push("Rekisterinumero: ei tiedossa");
       else if (v.rekisteri) lines.push(`Rekisterinumero: ${v.rekisteri}`);
+      if (v.auto) lines.push(`Auto: ${v.auto}`);
       if (v.km !== null) lines.push(`Mittarilukema: ${fmtKm(v.km)} km`);
       else if (v.kmText) lines.push(`Mittarilukema: ${v.kmText}`);
       lines.push(`Toivottu ajankohta: ${lower(v.ajankohta)}`, "");
@@ -669,7 +707,8 @@
             tyot: v.tyot, ajankohta: v.ajankohta,
             // Vastaanotin hyväksyy lukeman vain numerona: tunnistamaton lukema lisätietojen perään.
             lisatiedot: v.kmText ? [v.lisatiedot, `Mittarilukema: ${v.kmText}`].filter(Boolean).join("\n\n") : v.lisatiedot,
-            km: v.km, akseli: v.akseli, renkaat: v.renkaat, eiRekisteria: v.eiRekisteria,
+            km: v.km, akseli: v.akseli, jarrutyo: v.jarrutyo, katsastus: v.katsastus, renkaat: v.renkaat,
+            eiRekisteria: v.eiRekisteria,
             website: v.website, t: Date.now() - loadedAt, turnstile: token,
           }),
         });
