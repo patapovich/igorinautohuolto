@@ -1350,6 +1350,14 @@ fieldset.field { margin: 0; padding: 0; border: 0; }
 .facts dd { margin: 0.1rem 0 0; font-weight: 700; }
 .facts .btn { width: 100%; }
 
+.prose__quote { margin: 1.5rem 0; padding-left: 1.1rem; border-left: 3px solid var(--kulta); }
+.prose__quote blockquote { margin: 0; font-weight: 600; }
+.prose__quote blockquote p::before { content: "\201D"; }
+.prose__quote blockquote p::after { content: "\201D"; }
+.prose__quote figcaption { margin-top: 0.4rem; font-size: 0.9rem; color: var(--teksti-2); }
+.prose__links { columns: 2; column-gap: 2rem; }
+.prose a { text-underline-offset: 3px; }
+
 .board li a { text-underline-offset: 3px; }
 
 @media (max-width: 860px) {
