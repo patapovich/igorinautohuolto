@@ -57,17 +57,18 @@
   <h2>Mihin tietoja käytetään</h2>
   <p>Käytämme tietoja hinta-arvion laskemiseen, pyyntöösi vastaamiseen sekä työn sopimiseen ja tekemiseen. Käsittely perustuu pyyntöösi eli sopimusta edeltäviin toimiin ja sopimuksen täyttämiseen.</p>
   <p>Työn jälkeen Igor voi lähettää sinulle yhden tekstiviestin, jossa hän pyytää sinua arvioimaan korjaamon Googlessa. Tämä perustuu korjaamon oikeutettuun etuun. Jos et halua viestiä, kerro siitä. Puhelinnumeroasi ei käytetä muuhun markkinointiin, eikä tietoja luovuteta muille omiin tarkoituksiin.</p>
+  <p>Käytämme pyyntöjä myös automaattisen hinta-arvion kehittämiseen. Siihen tallentuu pyynnöstä kopio ilman nimeä, puhelinnumeroa, sähköpostiosoitetta, rekisterinumeroa ja IP-osoitetta. Kopiossa ovat lisätiedot, joista nämä tiedot on poistettu, valitut työt, auton malli ja vuosimalli sekä pyöristetty mittarilukema. Jos kirjoitat lisätietoihin muita henkilötietoja, ne voivat jäädä kopioon. Kopiota verrataan korjaamon lopulliseen arvioon tai työmääräykseen, jotta automaattinen arvio paranee. Vertailua varten kopiossa on rekisterinumerosta salaisella avaimella laskettu tunniste, mutta ei itse rekisterinumeroa. Vertailu tehdään omalla palvelimellamme, eikä tietoja lähetetä sitä varten muille palveluille. Käsittely perustuu korjaamon oikeutettuun etuun parantaa hinta-arvioiden tarkkuutta. Voit kieltää tietojesi käytön tähän ilmoittamalla siitä korjaamolle.</p>
 
   <h2>Miten lomakkeen tiedot kulkevat</h2>
   <p>Lomake lähettää tiedot korjaamolle sähköpostina. Samalla hinta-arvio lasketaan automaattisesti, ja Igor tarkistaa sen ennen vastaamista. Käsittelyssä käytetään näitä palveluja:</p>
   <ul>
-    <li><b>Cloudflare</b> vastaanottaa lomakkeen, estää roskalähetykset (Turnstile) ja tulkitsee pyynnön tekoälyn avulla. Roskalähetysten esto käynnistyy jo, kun alat täyttää lomaketta, ja Cloudflare saa silloin IP-osoitteesi ja selaimesi tiedot. Tekoälylle menevästä tekstistä poistetaan ensin nimi, puhelinnumero, sähköpostiosoite ja rekisterinumero. Roskalähetysten estämiseksi IP-osoitteesi säilyy enintään kaksi tuntia ja lähettämätön pyyntö enintään vuorokauden.</li>
+    <li><b>Cloudflare</b> vastaanottaa lomakkeen, estää roskalähetykset (Turnstile) ja tulkitsee pyynnön tekoälyn avulla. Roskalähetysten esto käynnistyy jo, kun alat täyttää lomaketta, ja Cloudflare saa silloin IP-osoitteesi ja selaimesi tiedot. Tekoälylle menevästä tekstistä poistetaan ensin nimi, puhelinnumero, sähköpostiosoite ja rekisterinumero. Roskalähetysten estämiseksi IP-osoitteesi säilyy enintään kaksi tuntia ja lähettämätön pyyntö enintään vuorokauden. Cloudflare säilyttää myös hinta-arvion kehittämiseen tallennetun kopion.</li>
     <li><b>Resend</b> välittää pyynnön sähköpostina korjaamolle.</li>
     <li><b>Autokorjaamo.fi</b> on korjaamon käyttämä korjaamo-ohjelmisto. Sinne tallentuu kustannusarvio, auton tiedot ja yhteystietosi.</li>
   </ul>
 
   <h2>Kuinka kauan tietoja säilytetään</h2>
-  <p>Säilytämme tietoja niin kauan kuin pyynnön käsittely ja siihen liittyvä työ vaativat. Laskutukseen liittyvät tiedot säilytämme kirjanpitolain vaatiman ajan.</p>
+  <p>Säilytämme tietoja niin kauan kuin pyynnön käsittely ja siihen liittyvä työ vaativat. Laskutukseen liittyvät tiedot säilytämme kirjanpitolain vaatiman ajan. Hinta-arvion kehittämiseen tallennettu kopio poistuu automaattisesti 24 kuukauden kuluttua.</p>
 
   <h2>Sivuston palvelin, evästeet ja kävijälaskenta</h2>
   <p>Sivusto on GitHub Pages -palvelussa, jota ylläpitää yhdysvaltalainen GitHub. Kun avaat sivun, palvelu saa IP-osoitteesi ja pyytämäsi sivun osoitteen.</p>
@@ -80,7 +81,7 @@
   <h2>Oikeutesi</h2>
   <p>Voit pyytää nähtäväksi itseäsi koskevat tiedot sekä pyytää niiden oikaisemista tai poistamista. Ota yhteyttä sähköpostilla tai puhelimitse. Jos katsot, että tietojasi käsitellään lainvastaisesti, voit tehdä valituksen <a href="https://tietosuoja.fi/" rel="noopener">tietosuojavaltuutetulle</a>.</p>
 
-  <p class="updated">Päivitetty 10.11.2026</p>
+  <p class="updated">Päivitetty 11.11.2026</p>
 </main>
 <!-- Cloudflare Web Analytics: evästeetön kävijälaskenta, ei tunnista yksittäisiä kävijöitä (tietosuoja/) -->
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "6f159cc751a84c548dd0879cfd58a2e0"}'></script>
