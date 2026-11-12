@@ -120,6 +120,19 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   });
 
+  /* ---------- Logo (#top): aina sivun alkuun ----------
+     Selain ei vieritä uudelleen, jos osoitteessa on jo #top, joten vieritys tehdään itse ja osoite jätetään
+     ilman #-osaa. Vierityksen pehmeys tulee CSS:n scroll-behavior-asetuksesta (pois, jos liike on vähennetty).
+     Ilman JavaScriptiä linkki toimii tavallisena #top-linkkinä. */
+
+  run("top", () => {
+    $$('a[href="#top"]').forEach((a) => a.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0 });
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    }));
+  });
+
   /* ---------- Aktiivinen navigaatiolinkki ---------- */
 
   run("nav", () => {
